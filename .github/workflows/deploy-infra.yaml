@@ -73,9 +73,9 @@ jobs:
       id: destroy_arg
       run: |
         if [ $DESTROY == "true" ]; then
-          echo "::set-output name=val::-destroy" 
+          echo "val=-destroy" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=val:: "
+          echo "val=" >> $GITHUB_OUTPUT
         fi
       env:
         DESTROY: ${{ github.event.inputs.destroy }}
@@ -134,7 +134,7 @@ jobs:
       with:
         name: tf-plan
         path: ${{ env.tf_actions_working_dir }}/out.tfplan
-        
+
     - name: Publish plan as a status
       if: github.event_name == 'pull_request'
       uses: Sibz/github-status-action@v1.1.6

@@ -109,21 +109,21 @@ jobs:
           \`\`\`
           </details>
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-          
+      
           <details><summary>Show Plan</summary>
-          
+      
           \`\`\`\n
           ${process.env.PLAN}
           \`\`\`
-          
+      
           </details>
-          
+      
           *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-          
-          // 2. Set the output variable
+      
+          // 2. Write the output to GITHUB_OUTPUT
           const fs = require('fs');
           fs.writeFileSync('${{ env.tf_actions_working_dir }}/summary.md', output);
-          core.setOutput('summary', output);
+          fs.appendFileSync('${{ env.GITHUB_OUTPUT }}', 'summary=${{ env.tf_actions_working_dir }}/summary.md');
       
     - name: Write the step summary
       if: always()

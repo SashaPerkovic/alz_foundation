@@ -99,31 +99,40 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          // 1. Prep the output
-          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-          <details><summary>Validation Output</summary>
-          \`\`\`\n
-          ${{ steps.validate.outputs.stdout }}
-          \`\`\`
-          </details>
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-      
-          <details><summary>Show Plan</summary>
-      
-          \`\`\`\n
-          ${process.env.PLAN}
-          \`\`\`
-      
-          </details>
-      
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-      
-          // 2. Write the output to GITHUB_OUTPUT
-          const fs = require('fs');
-          fs.writeFileSync('${{ env.tf_actions_working_dir }}/summary.md', output);
-          fs.appendFileSync('${{ env.GITHUB_OUTPUT }}', 'summary=${{ env.tf_actions_working_dir }}/summary.md');
+            // 1. Prep the output
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            <details><summary>Validation Output</summary>
+            \`\`\`\n
+            ${{ steps.validate.outputs.stdout }}
+            \`\`\`
+            </details>
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+        
+            <details><summary>Show Plan</summary>
+        
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+        
+            </details>
+        
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+        
+            // 2. Create the directory if it does not exist
+            const fs = require('fs');
+            const path = require('path');
+            const dir = path.dirname('${{ env.tf_actions_working_dir }}/summary.md');
+            if (!fs.existsSync(dir)) {
+              fs.mkdirSync(dir, { recursive: true });
+            }
+        
+            // 3. Write the output to the file
+            fs.writeFileSync('${{ env.tf_actions_working_dir }}/summary.md', output);
+        
+            // 4. Write the file path to GITHUB_OUTPUT
+            fs.appendFileSync('${{ env.GITHUB_OUTPUT }}', 'summary=${{ env.tf_actions_working_dir }}/summary.md');
       
     - name: Write the step summary
       if: always()

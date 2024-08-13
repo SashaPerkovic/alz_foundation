@@ -43,12 +43,12 @@ jobs:
       uses: hashicorp/setup-terraform@v1
 
     - name: Setup TFLint
-          uses: terraform-linters/setup-tflint@v1
+      uses: terraform-linters/setup-tflint@v1
     
     - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -check
-        continue-on-error: true
+      id: fmt
+      run: terraform fmt -check
+      continue-on-error: true
     
     - name: Terraform Init
       id: init
@@ -60,8 +60,8 @@ jobs:
         ARM_USE_OIDC: true
 
     - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
+      id: validate
+      run: terraform validate -no-color
 
     - name: Init TFLint
       run: tflint --init
